@@ -1,0 +1,31 @@
+# GENESIS world.toml — Declarative configuration for a Pioneer-seeded universe
+
+[universe]
+name = "genesis-local"
+id = "local-001"
+
+[pioneer]
+# Bootstrap identity for the first agent
+name = "Pioneer-0"
+soul_path = "souls/pioneer.md"
+agent_path = "agents/pioneer.md"
+
+[light]
+# libp2p gossip / pubsub settings
+listen_multiaddrs = ["/ip4/0.0.0.0/tcp/4001"]
+bootstrap_peers = []
+topic_prefix = "genesis"
+
+[gravity]
+# Local Solana-style immutable memory
+enabled = true
+rpc_url = "http://127.0.0.1:8899"
+program_id = ""  # set after first deploy
+
+[safety]
+allow_self_replication = true
+allow_code_mutation = false          # start conservative
+require_human_approval_for = ["spawn_new_host", "mutate_core"]
+
+[logging]
+level = "info"
