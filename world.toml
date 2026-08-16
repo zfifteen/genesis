@@ -1,31 +1,54 @@
 # GENESIS world.toml — Declarative configuration for a Pioneer-seeded universe
+# Source of truth. Hashed into the genesis block on Gravity.
 
-[universe]
-name = "genesis-local"
-id = "local-001"
+[world]
+name = "lab_one"
+version = "0.1.0"
+domain = "lab.local"
 
-[pioneer]
-# Bootstrap identity for the first agent
-name = "Pioneer-0"
-soul_path = "souls/pioneer.md"
-agent_path = "agents/pioneer.md"
+[hardware]
+gas_giants = ["mini1.local", "mini2.local"]
+terrestrial = ["mb1.local", "mb2.local", "mb3.local", "mb4.local", "mb5.local"]
+observatory = "ipad.local"
 
-[light]
-# libp2p gossip / pubsub settings
-listen_multiaddrs = ["/ip4/0.0.0.0/tcp/4001"]
-bootstrap_peers = []
-topic_prefix = "genesis"
+[network]
+bus = "libp2p_gossipsub"
+topic = "agent-bus"
+discovery = "mdns"
 
-[gravity]
-# Local Solana-style immutable memory
-enabled = true
-rpc_url = "http://127.0.0.1:8899"
-program_id = ""  # set after first deploy
+[chain]
+type = "solana_test_validator"
+primary_host = "mini1.local"
+secondary_host = "mini2.local"
+block_time_ms = 0
+storage_backend = "local_seeder"
 
-[safety]
-allow_self_replication = true
-allow_code_mutation = false          # start conservative
-require_human_approval_for = ["spawn_new_host", "mutate_core"]
+[memory]
+agent_md_path = "/genesis/memory/agent"
+soul_md_path = "/genesis/memory/soul"
+hash_algo = "sha256"
 
-[logging]
-level = "info"
+[[roles.pioneers]]
+name = "builder"
+count = 1
+soul = "You install dependencies, Docker, Solana CLI, libp2p daemons."
+
+[[roles.pioneers]]
+name = "network"
+count = 1
+soul = "You wire up gossipsub and ensure all planets can see each other."
+
+[[roles.pioneers]]
+name = "memory_keeper"
+count = 2
+soul = "You pin Agent.md and SOUL.md files and publish their hashes to Solana PDAs."
+
+[[roles.pioneers]]
+name = "conductor"
+count = 1
+soul = "You orchestrate the creation and destruction of moons based on load and gravity."
+
+[orchestration]
+max_cpu_percent = 70
+min_critics = 1
+auto_scale = true
